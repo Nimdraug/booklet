@@ -5,13 +5,15 @@
 def iter_pages( pages ):
 	for output_page in range( pages / 4 ):
 		first = output_page * 2
-		yield first
-		yield first + 1
-
 		last = pages - 1 - first
-		yield last - 1
-		yield last
 
+		# Front
+		yield first + 1
+		yield last - 1
+
+		# Back
+		yield last
+		yield first
 
 def test_pagegroups():
 	assert pagegroups( 1 ) == 1
@@ -29,38 +31,38 @@ def test_pagegroups():
 
 def test_pagesequence():
 	pagesequence = iter_pages( 4 )
-	assert pagesequence.next() == 0
 	assert pagesequence.next() == 1
 	assert pagesequence.next() == 2
 	assert pagesequence.next() == 3
+	assert pagesequence.next() == 0
 
 	pagesequence = iter_pages( 8 )
-	assert pagesequence.next() == 0
 	assert pagesequence.next() == 1
 	assert pagesequence.next() == 6
 	assert pagesequence.next() == 7
-	assert pagesequence.next() == 2
+	assert pagesequence.next() == 0
 	assert pagesequence.next() == 3
 	assert pagesequence.next() == 4
 	assert pagesequence.next() == 5
+	assert pagesequence.next() == 2
 
 	pagesequence = iter_pages( 16 )
-	assert pagesequence.next() == 0
 	assert pagesequence.next() == 1
 	assert pagesequence.next() == 14
 	assert pagesequence.next() == 15
-	assert pagesequence.next() == 2
+	assert pagesequence.next() == 0
 	assert pagesequence.next() == 3
 	assert pagesequence.next() == 12
 	assert pagesequence.next() == 13
-	assert pagesequence.next() == 4
+	assert pagesequence.next() == 2
 	assert pagesequence.next() == 5
 	assert pagesequence.next() == 10
 	assert pagesequence.next() == 11
-	assert pagesequence.next() == 6
+	assert pagesequence.next() == 4
 	assert pagesequence.next() == 7
 	assert pagesequence.next() == 8
 	assert pagesequence.next() == 9
+	assert pagesequence.next() == 6
 
 if __name__ == '__main__':
 	test_pagesequence()
