@@ -2,6 +2,17 @@
 # -p	Pages (default all)
 # -s	Sheets per "page group" (find correct term) (default auto = as many as is required to fit all pages)
 
+def iter_pages( pages ):
+	for output_page in range( pages / 4 ):
+		first = output_page * 2
+		yield first
+		yield first + 1
+
+		last = pages - 1 - first
+		yield last - 1
+		yield last
+
+
 def test_pagegroups():
 	assert pagegroups( 1 ) == 1
 	assert pagegroups( 2 ) == 1
