@@ -1,6 +1,9 @@
+#!/bin/env python2
 # booklet -p 0-99 -s 5
 # -p	Pages (default all)
 # -s	Sheets per "page group" (find correct term) (default auto = as many as is required to fit all pages)
+
+import math, PyPDF2.utils
 
 def iter_pages( pages ):
 	for output_page in range( pages / 4 ):
@@ -28,6 +31,17 @@ def test_pagegroups():
 	
 	assert pagegroups( 16 ) == 4
 
+
+def translation_matrix( x, y = None ):
+	if y == None:
+		y = x
+
+	return [
+		[ 1, 0, 0 ],
+		[ 0, 1, 0 ],
+		[ x, y, 1 ]
+	]
+
 def scale_matix( scale_x, scale_y = None ):
 	if scale_y == None:
 		scale_y = scale_x
@@ -38,8 +52,24 @@ def scale_matix( scale_x, scale_y = None ):
 		[ 0,	   0,	    1 ]
 	]
 
+def rotation_matrix( angle, rad = False ):
+	if not rad:
+		angle = math.radians( angle )
+
+	return [
+		[  math.cos( angle ), math.sin( angle ), 0 ],
+		[ -math.sin( angle ), math.cos( angle ), 0 ],
+		[  0,                 0,                 1 ]
+	]
+
+def merge_matrix( translation_matrix ):
+	return [
+		translation_matrix[0][0], translation_matrix[0][1],
+		translation_matrix[1][0], translation_matrix[1][1],
+		translation_matrix[2][0], translation_matrix[2][1]
+	]
+
 def build_page():
-	import PyPDF2.utils, math
 	src = PyPDF2.PdfFileReader( file( 'test.pdf', 'rb' ) )
 	out = PyPDF2.PdfFileWriter()
 
@@ -47,40 +77,15 @@ def build_page():
 	aspect = size[0] / size[1]
 
 	newpage = out.addBlankPage( *size )
-	print newpage
 
 	page1 = src.getPage( 0 )
-		#page1.scaleBy( float( aspect ) )
-	#page1.scaleBy( .1 )
 
-	print page1.mediaBox.upperRight
-	print size[0] * aspect, size[1] * aspect
+	tm = PyPDF2.utils.matrixMultiply( scale_matix( aspect ), rotation_matrix( 90 ) )
+	tm = PyPDF2.utils.matrixMultiply( tm, translation_matrix( size[ 0 ], 0 ) )
 
-	tx = size[ 0 ]
-	ty = 0
-	rotation = 90
-
-	scale = scale_matix( aspect )
-	translation = [[1, 0, 0],
-					[0, 1, 0],
-					[tx, ty, 1]]
-	rotation = math.radians(rotation)
-	rotating = [[math.cos(rotation), math.sin(rotation), 0],
-	[-math.sin(rotation), math.cos(rotation), 0],
-	[0, 0, 1]]
-	rtranslation = [[1, 0, 0],
-	[0, 1, 0],
-	[tx, ty, 1]]
-	ctm = PyPDF2.utils.matrixMultiply(scale, rotating)
-	ctm = PyPDF2.utils.matrixMultiply(ctm, translation)
-	#ctm = PyPDF2.utils.matrixMultiply(ctm, rtranslation)
-
-	newpage.mergeTransformedPage( page1, [ ctm[0][0], ctm[0][1],
-ctm[1][0], ctm[1][1],
-ctm[2][0], ctm[2][1]] )
+	newpage.mergeTransformedPage( page1, merge_matrix( tm ) )
 
 	out.write( file( 'out.pdf', 'wb' ) )
-
 
 def test_pagesequence():
 	pagesequence = iter_pages( 4 )
