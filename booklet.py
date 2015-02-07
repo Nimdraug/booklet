@@ -85,6 +85,13 @@ def build_page():
 
 	newpage.mergeTransformedPage( page1, merge_matrix( tm ) )
 
+	page2 = src.getPage( 1 )
+
+	tm = PyPDF2.utils.matrixMultiply( scale_matix( aspect ), rotation_matrix( -90 ) )
+	tm = PyPDF2.utils.matrixMultiply( tm, translation_matrix( 0, size[ 1 ] ) )
+
+	newpage.mergeTransformedPage( page2, merge_matrix( tm ) )
+
 	out.write( file( 'out.pdf', 'wb' ) )
 
 def test_pagesequence():
