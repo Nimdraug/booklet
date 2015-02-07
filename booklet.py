@@ -80,8 +80,8 @@ def build_page():
 
 	page1 = src.getPage( 0 )
 
-	tm = PyPDF2.utils.matrixMultiply( scale_matix( aspect ), rotation_matrix( 90 ) )
-	tm = PyPDF2.utils.matrixMultiply( tm, translation_matrix( size[ 0 ], 0 ) )
+	tm = PyPDF2.utils.matrixMultiply( scale_matix( aspect ), rotation_matrix( -90 ) )
+	tm = PyPDF2.utils.matrixMultiply( tm, translation_matrix( 0, size[ 1 ] / 2 ) )
 
 	newpage.mergeTransformedPage( page1, merge_matrix( tm ) )
 
