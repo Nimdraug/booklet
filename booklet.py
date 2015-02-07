@@ -28,6 +28,59 @@ def test_pagegroups():
 	
 	assert pagegroups( 16 ) == 4
 
+def scale_matix( scale_x, scale_y = None ):
+	if scale_y == None:
+		scale_y = scale_x
+
+	return [
+		[ scale_x, 0,	    0 ],
+		[ 0, 	   scale_y, 0 ],
+		[ 0,	   0,	    1 ]
+	]
+
+def build_page():
+	import PyPDF2.utils, math
+	src = PyPDF2.PdfFileReader( file( 'test.pdf', 'rb' ) )
+	out = PyPDF2.PdfFileWriter()
+
+	size = src.getPage(0).mediaBox.upperRight
+	aspect = size[0] / size[1]
+
+	newpage = out.addBlankPage( *size )
+	print newpage
+
+	page1 = src.getPage( 0 )
+		#page1.scaleBy( float( aspect ) )
+	#page1.scaleBy( .1 )
+
+	print page1.mediaBox.upperRight
+	print size[0] * aspect, size[1] * aspect
+
+	tx = size[ 0 ]
+	ty = 0
+	rotation = 90
+
+	scale = scale_matix( aspect )
+	translation = [[1, 0, 0],
+					[0, 1, 0],
+					[tx, ty, 1]]
+	rotation = math.radians(rotation)
+	rotating = [[math.cos(rotation), math.sin(rotation), 0],
+	[-math.sin(rotation), math.cos(rotation), 0],
+	[0, 0, 1]]
+	rtranslation = [[1, 0, 0],
+	[0, 1, 0],
+	[tx, ty, 1]]
+	ctm = PyPDF2.utils.matrixMultiply(scale, rotating)
+	ctm = PyPDF2.utils.matrixMultiply(ctm, translation)
+	#ctm = PyPDF2.utils.matrixMultiply(ctm, rtranslation)
+
+	newpage.mergeTransformedPage( page1, [ ctm[0][0], ctm[0][1],
+ctm[1][0], ctm[1][1],
+ctm[2][0], ctm[2][1]] )
+
+	out.write( file( 'out.pdf', 'wb' ) )
+
 
 def test_pagesequence():
 	pagesequence = iter_pages( 4 )
@@ -65,4 +118,5 @@ def test_pagesequence():
 	assert pagesequence.next() == 6
 
 if __name__ == '__main__':
-	test_pagesequence()
+	#test_pagesequence()
+	build_page()
