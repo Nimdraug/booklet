@@ -131,18 +131,17 @@ def test_pagesequence():
     assert pagesequence.next() == ( 7,  90, 0, 1 )
     assert pagesequence.next() == ( 8,  90, 0, .5 )
 
-if __name__ == '__main__':
+def main():
+    import argparse
 
-    if len( sys.argv ) > 1:
-        in_file = file( sys.argv[1], 'rb' )
-        
-        if len( sys.argv ) > 2:
-            out_file = file( sys.argv[2], 'wb' )
-        else:
-            print 'Please provide output file!'
-            sys.exit( 1 )
-    else:
-        print 'Please provide input and output files!'
-        sys.exit( 1 )
+    p = argparse.ArgumentParser( description = 'create a booklet pdf from source document' )
+    p.add_argument( 'source', type = argparse.FileType( 'rb' ),
+                    help = 'the document to turn into a booklet' )
+    p.add_argument( 'target', type = argparse.FileType( 'wb' ),
+                    help = 'the file to output the booklet to' )
 
-    build_doc( in_file, out_file )
+    args = p.parse_args()
+
+    build_doc( args.source, args.target )
+
+if __name__ == '__main__':     main()
