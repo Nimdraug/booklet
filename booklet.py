@@ -79,22 +79,21 @@ def build_page():
 
     size = src.getPage(0).mediaBox.upperRight
     aspect = size[0] / size[1]
+    
+    outpage = out.addBlankPage( *size )
 
-    newpage = out.addBlankPage( *size )
+    for i, v in enumerate( iter_pages( src.numPages ) ):
+        p, r, x, y = v
+        if p < src.numPages:
+            srcpage = src.getPage( p )
 
-    page1 = src.getPage( 0 )
+            tm = PyPDF2.utils.matrixMultiply( scale_matix( aspect ), rotation_matrix( -r ) )
+            tm = PyPDF2.utils.matrixMultiply( tm, translation_matrix( float( size[0] ) * x, float( size[1] ) * y ) )
 
-    tm = PyPDF2.utils.matrixMultiply( scale_matix( aspect ), rotation_matrix( -90 ) )
-    tm = PyPDF2.utils.matrixMultiply( tm, translation_matrix( 0, size[ 1 ] / 2 ) )
+            outpage.mergeTransformedPage( srcpage, merge_matrix( tm ) )
 
-    newpage.mergeTransformedPage( page1, merge_matrix( tm ) )
-
-    page2 = src.getPage( 1 )
-
-    tm = PyPDF2.utils.matrixMultiply( scale_matix( aspect ), rotation_matrix( -90 ) )
-    tm = PyPDF2.utils.matrixMultiply( tm, translation_matrix( 0, size[ 1 ] ) )
-
-    newpage.mergeTransformedPage( page2, merge_matrix( tm ) )
+        if i < src.numPages and i % 2:
+            outpage = out.addBlankPage( *size )
 
     out.write( file( 'out.pdf', 'wb' ) )
 
