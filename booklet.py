@@ -3,7 +3,7 @@
 # -p    Pages (default all)
 # -s    Sheets per "page group" (find correct term) (default auto = as many as is required to fit all pages)
 
-import math, PyPDF2.utils
+import math, PyPDF2.utils, sys
 
 def iter_pages( pages ):
     if pages % 4:
@@ -58,8 +58,8 @@ def merge_matrix( translation_matrix ):
         translation_matrix[2][0], translation_matrix[2][1]
     ]
 
-def build_doc():
-    src = PyPDF2.PdfFileReader( file( 'test.pdf', 'rb' ) )
+def build_doc( in_file, out_file ):
+    src = PyPDF2.PdfFileReader( in_file )
     out = PyPDF2.PdfFileWriter()
 
     size = src.getPage(0).mediaBox.upperRight
@@ -80,7 +80,7 @@ def build_doc():
         if i < src.numPages and i % 2:
             outpage = out.addBlankPage( *size )
 
-    out.write( file( 'out.pdf', 'wb' ) )
+    out.write( out_file )
 
 def test_pagesequence():
     pagesequence = iter_pages( 4 )
@@ -132,4 +132,17 @@ def test_pagesequence():
     assert pagesequence.next() == ( 8,  90, 0, .5 )
 
 if __name__ == '__main__':
-    build_doc()
+
+    if len( sys.argv ) > 1:
+        in_file = file( sys.argv[1], 'rb' )
+        
+        if len( sys.argv ) > 2:
+            out_file = file( sys.argv[2], 'wb' )
+        else:
+            print 'Please provide output file!'
+            sys.exit( 1 )
+    else:
+        print 'Please provide input and output files!'
+        sys.exit( 1 )
+
+    build_doc( in_file, out_file )
