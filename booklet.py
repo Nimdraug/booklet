@@ -6,6 +6,9 @@
 import math, PyPDF2.utils
 
 def iter_pages( pages ):
+    if pages % 4:
+        pages = pages + 4 - pages % 4
+
     for output_page in range( pages / 4 ):
         first = output_page * 2
         last = pages - 1 - first
@@ -102,7 +105,7 @@ def test_pagesequence():
     assert pagesequence.next() == 1
     assert pagesequence.next() == 2
 
-    pagesequence = iter_pages( 8 )
+    pagesequence = iter_pages( 6 )
     assert pagesequence.next() == 0
     assert pagesequence.next() == 7
     assert pagesequence.next() == 1
