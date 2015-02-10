@@ -14,12 +14,12 @@ def iter_pages( pages ):
         last = pages - 1 - first
 
         # Front
-        yield first
-        yield last
+        yield first, -90, 1, .5
+        yield last, -90, 1, 0
 
         # Back
-        yield first + 1
-        yield last - 1
+        yield first + 1,  90, 0, 1
+        yield last - 1,  90, 0, .5
 
 
 def test_pagegroups():
@@ -100,52 +100,52 @@ def build_page():
 
 def test_pagesequence():
     pagesequence = iter_pages( 4 )
-    assert pagesequence.next() == 0
-    assert pagesequence.next() == 3
-    assert pagesequence.next() == 1
-    assert pagesequence.next() == 2
+    assert pagesequence.next() == ( 0, -90, 1, .5 )
+    assert pagesequence.next() == ( 3, -90, 1, 0 )
+    assert pagesequence.next() == ( 1,  90, 0, 1 )
+    assert pagesequence.next() == ( 2,  90, 0, .5 )
 
     pagesequence = iter_pages( 6 )
-    assert pagesequence.next() == 0
-    assert pagesequence.next() == 7
-    assert pagesequence.next() == 1
-    assert pagesequence.next() == 6
-    assert pagesequence.next() == 2
-    assert pagesequence.next() == 5
-    assert pagesequence.next() == 3
-    assert pagesequence.next() == 4
+    assert pagesequence.next() == ( 0, -90, 1, .5 )
+    assert pagesequence.next() == ( 7, -90, 1, 0 )
+    assert pagesequence.next() == ( 1,  90, 0, 1 )
+    assert pagesequence.next() == ( 6,  90, 0, .5 )
+    assert pagesequence.next() == ( 2, -90, 1, .5 )
+    assert pagesequence.next() == ( 5, -90, 1, 0 )
+    assert pagesequence.next() == ( 3,  90, 0, 1 )
+    assert pagesequence.next() == ( 4,  90, 0, .5 )
 
     pagesequence = iter_pages( 12 )
-    assert pagesequence.next() == 0
-    assert pagesequence.next() == 11
-    assert pagesequence.next() == 1
-    assert pagesequence.next() == 10
-    assert pagesequence.next() == 2
-    assert pagesequence.next() == 9
-    assert pagesequence.next() == 3
-    assert pagesequence.next() == 8
-    assert pagesequence.next() == 4
-    assert pagesequence.next() == 7
-    assert pagesequence.next() == 5
-    assert pagesequence.next() == 6
+    assert pagesequence.next() == ( 0, -90, 1, .5 )
+    assert pagesequence.next() == ( 11, -90, 1, 0 )
+    assert pagesequence.next() == ( 1,  90, 0, 1 )
+    assert pagesequence.next() == ( 10,  90, 0, .5 )
+    assert pagesequence.next() == ( 2, -90, 1, .5 )
+    assert pagesequence.next() == ( 9, -90, 1, 0 )
+    assert pagesequence.next() == ( 3,  90, 0, 1 )
+    assert pagesequence.next() == ( 8,  90, 0, .5 )
+    assert pagesequence.next() == ( 4, -90, 1, .5 )
+    assert pagesequence.next() == ( 7, -90, 1, 0 )
+    assert pagesequence.next() == ( 5,  90, 0, 1 )
+    assert pagesequence.next() == ( 6,  90, 0, .5 )
 
     pagesequence = iter_pages( 16 )
-    assert pagesequence.next() == 0
-    assert pagesequence.next() == 15
-    assert pagesequence.next() == 1
-    assert pagesequence.next() == 14
-    assert pagesequence.next() == 2
-    assert pagesequence.next() == 13
-    assert pagesequence.next() == 3
-    assert pagesequence.next() == 12
-    assert pagesequence.next() == 4
-    assert pagesequence.next() == 11
-    assert pagesequence.next() == 5
-    assert pagesequence.next() == 10
-    assert pagesequence.next() == 6
-    assert pagesequence.next() == 9
-    assert pagesequence.next() == 7
-    assert pagesequence.next() == 8
+    assert pagesequence.next() == ( 0, -90, 1, .5 )
+    assert pagesequence.next() == ( 15, -90, 1, 0 )
+    assert pagesequence.next() == ( 1,  90, 0, 1 )
+    assert pagesequence.next() == ( 14,  90, 0, .5 )
+    assert pagesequence.next() == ( 2, -90, 1, .5 )
+    assert pagesequence.next() == ( 13, -90, 1, 0 )
+    assert pagesequence.next() == ( 3,  90, 0, 1 )
+    assert pagesequence.next() == ( 12,  90, 0, .5 )
+    assert pagesequence.next() == ( 4, -90, 1, .5 )
+    assert pagesequence.next() == ( 11, -90, 1, 0 )
+    assert pagesequence.next() == ( 5,  90, 0, 1 )
+    assert pagesequence.next() == ( 10,  90, 0, .5 )
+    assert pagesequence.next() == ( 6, -90, 1, .5 )
+    assert pagesequence.next() == ( 9, -90, 1, 0 )
+    assert pagesequence.next() == ( 7,  90, 0, 1 )
+    assert pagesequence.next() == ( 8,  90, 0, .5 )
 
 if __name__ == '__main__':
     #test_pagesequence()
